@@ -23,8 +23,14 @@ class LoginView extends React.Component {
         this.props.navigation.navigate(page);
     }
 
+    componentDidMount = async () => {
+      var token = await AsyncStorage.getItem('token');
+      if(token != null)
+        this.navigateToPage('DashboardView')
+    }
+
     onLogin = (data) => {
-        fetch(config.backendUrl + 'users/login', {
+        fetch('http://127.0.0.1:3000/api/login', {
             method: 'POST',
             headers: {
               Accept: 'application/json',
