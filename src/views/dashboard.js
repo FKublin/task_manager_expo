@@ -37,7 +37,7 @@ class DashboardView extends React.Component{
       this.setState({ modalVisible: visible });
     }
 
-    submitProject = (data) => {
+    submitProject = async (data) => {
       var token = await AsyncStorage.getItem('token');
       fetch('http://127.0.0.1:3000/api/projects', {
         method: 'POST',
@@ -50,29 +50,37 @@ class DashboardView extends React.Component{
           projectName: data.projectName
         }),
       }).then(Alert.alert('Project submitted! Now you can access it from the dashboard'));
-      //this.navigateToPage('LoginView');
-      //setUserToken(null);
+      
+      await this.getData();
     } 
-  
 
+    handleNavigate = (user, name) => {
+      const {navigation} = this.props;
+      navigation.navigate('ProjectView', {user, name});
+    };
+
+    getData = async () => {
+      var token = await AsyncStorage.getItem('token');
+      console.log('Token: ' + token);
+      fetch('http://127.0.0.1:3000/api/projects', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'auth-token': token,
+        },
+      })
+        .then(response => response.json())
+        .then(json => {
+          this.setState({data: json.projects});
+        })
+        .catch(error => console.error(error))
+    }
+  
     componentDidMount = async () => {
         const {navigation} = this.props;
         await navigation.addListener('focus', async () => {
-          var token = await AsyncStorage.getItem('token');
-          console.log('Token: ' + token);
-          fetch('http://127.0.0.1:3000/api/projects', {
-            method: 'GET',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-              'auth-token': token,
-            },
-          })
-            .then(response => response.json())
-            .then(json => {
-              this.setState({data: json.projects});
-            })
-            .catch(error => console.error(error))
+          this.getData();
         });
     }
 
@@ -83,8 +91,7 @@ class DashboardView extends React.Component{
             <View style={styles.container}>
                 
                 {this.state.data.length == 0 ? (
-                    <Text>You do not belong to any projects at the moment. Try creating one with the button below</Text>
-                    
+                    <Text>You do not belong to any projects at the moment. Creat one with the button below or ask for an invitation</Text>
                 ) : (
                     <FlatList
                     data={this.state.data}
@@ -93,7 +100,7 @@ class DashboardView extends React.Component{
                       <TouchableOpacity
                         style={styles.touchable}
                         onPress={() => {
-                          //this.handleNavigate(item._id, item.projectName);
+                          this.handleNavigate(item._id, item.projectName);
                         }}>
                         <Text style={styles.white}>{item.projectName}</Text>
                       </TouchableOpacity>
@@ -113,7 +120,7 @@ class DashboardView extends React.Component{
                       <View style={styles.inputContainer}>
                         <TextInput style={styles.inputs}
                         keyboardType="default"
-                        placeholder="Display name"
+                        placeholder="Project name"
                         value={this.state.projectName}
                         onChangeText={(projectName) => this.setState({projectName})}/>
                       </View>

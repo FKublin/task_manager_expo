@@ -2,7 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import SignUpView from './views/signup';
 import LoginView from './views/login';
-import  DashboardView from './views/dashboard';
+import DashboardView from './views/dashboard';
+import ProjectView from './views/project';
 
 const Stack = createStackNavigator()
 
@@ -24,8 +25,11 @@ render(){
                 component={DashboardView}
                 options={{
                     headerShown: false
-                  }}
-                
+                  }}  
+            />
+            <Stack.Screen
+                name="ProjectView"
+                component={ProjectView}
             />
 
         </Stack.Navigator>

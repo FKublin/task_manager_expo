@@ -30,7 +30,7 @@ class LoginView extends React.Component {
     }
 
     onLogin = (data) => {
-        fetch('http://127.0.0.1:3000/api/login', {
+        fetch('http://127.0.0.1:3000/api/users/login', {
             method: 'POST',
             headers: {
               Accept: 'application/json',
