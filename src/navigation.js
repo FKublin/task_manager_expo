@@ -1,12 +1,15 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack';
 import SignUpView from './views/signup';
 import LoginView from './views/login';
 import DashboardView from './views/dashboard';
 import ProjectView from './views/project';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackActions } from '@react-navigation/native';
+
 
 const Stack = createStackNavigator()
-
+//const navigation = useNavigation();
 export default class AppNavigator extends React.Component{
     
 render(){
@@ -23,9 +26,20 @@ render(){
             <Stack.Screen
                 name="DashboardView"
                 component={DashboardView}
-                options={{
-                    headerShown: false
-                  }}  
+                options={({navigation}) => ({
+                    headerLeft: (props) => (
+                        <HeaderBackButton
+                          {...props}
+                          onPress={() => {
+                            AsyncStorage.removeItem('token');
+                            //this.props.navigation.navigate("LoginView")
+                            navigation.dispatch(StackActions.popToTop());
+  
+                          }}
+                        />
+                      ),
+                })}
+                
             />
             <Stack.Screen
                 name="ProjectView"

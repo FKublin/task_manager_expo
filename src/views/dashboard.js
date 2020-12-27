@@ -6,21 +6,21 @@ import { StyleSheet,
     TextInput,
     TouchableHighlight,
     Alert,
-    FlatList
+    FlatList,
+    Platform, Modal
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FAB} from 'react-native-paper';
-import Modal from 'modal-react-native-web';
-import {Button} from 'react-native-elements';
+import WebModal from 'modal-react-native-web';
 import config from '../config.json';
-import { MaterialIcons } from '@expo/vector-icons';
+
 
     
 class DashboardView extends React.Component{
 
     static navigationOptions = {
         title: 'Dashboard',
-        header: null
+        header: null,
 
     };
 
@@ -29,7 +29,9 @@ class DashboardView extends React.Component{
         this.state = {
             data: [],
             projectName: '',
-            modalVisible: false
+            modalVisible: false,
+            serverUrl: '',
+      
         }
     }
 
@@ -39,7 +41,7 @@ class DashboardView extends React.Component{
 
     submitProject = async (data) => {
       var token = await AsyncStorage.getItem('token');
-      fetch('http://127.0.0.1:3000/api/projects', {
+      fetch(this.state.serverUrl + 'projects', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -62,7 +64,7 @@ class DashboardView extends React.Component{
     getData = async () => {
       var token = await AsyncStorage.getItem('token');
       console.log('Token: ' + token);
-      fetch('http://127.0.0.1:3000/api/projects', {
+      fetch(this.state.serverUrl + 'projects', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -80,8 +82,22 @@ class DashboardView extends React.Component{
     componentDidMount = async () => {
         const {navigation} = this.props;
         await navigation.addListener('focus', async () => {
+          
+
+          if(Platform.OS === 'android')
+            this.setState({serverUrl: config.mobileBackendUrl});
+          else
+            this.setState({serverUrl: config.backendUrl});
+
+          console.log(this.state.serverUrl);
+
           this.getData();
         });
+        var index = 1;
+        var items = [];
+        this.state.data.forEach((item) => {
+          items.push({id: index, name: item.projectName})
+        })
     }
 
     render() {
@@ -89,12 +105,15 @@ class DashboardView extends React.Component{
 
         return(
             <View style={styles.container}>
+              
                 
-                {this.state.data.length == 0 ? (
+                {this.state.data.length == 0 ? 
                     <Text>You do not belong to any projects at the moment. Creat one with the button below or ask for an invitation</Text>
-                ) : (
+                 : 
+                    
                     <FlatList
                     data={this.state.data}
+                    
                     keyExtractor={({_id}, index) => _id}
                     renderItem={({item}) => (
                       <TouchableOpacity
@@ -102,13 +121,15 @@ class DashboardView extends React.Component{
                         onPress={() => {
                           this.handleNavigate(item._id, item.projectName);
                         }}>
-                        <Text style={styles.white}>{item.projectName}</Text>
+                        <Text style={styles.textStyle}>{item.projectName}</Text>
                       </TouchableOpacity>
                     )}
                   />
-                )
+                
                 }
                 
+
+                {Platform.OS === 'android' ? (
                 <Modal
                   animationType="slide"
                   transparent={true}
@@ -124,6 +145,9 @@ class DashboardView extends React.Component{
                         value={this.state.projectName}
                         onChangeText={(projectName) => this.setState({projectName})}/>
                       </View>
+
+
+                      <View style={styles.buttonContainer}>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
@@ -141,9 +165,51 @@ class DashboardView extends React.Component{
                       >
                         <Text style={styles.textStyle}>Create</Text>
                       </TouchableHighlight>
+                      </View>
+
+
                     </View>
                   </View>
                 </Modal>
+                ) : (
+                  <WebModal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                >
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Text style={styles.modalText}>Create a new project</Text>
+                      <View style={styles.inputContainer}>
+                        <TextInput style={styles.inputs}
+                        keyboardType="default"
+                        placeholder="Project name"
+                        value={this.state.projectName}
+                        onChangeText={(projectName) => this.setState({projectName})}/>
+                      </View>
+                      <View style={styles.buttonContainer}>
+                      <TouchableHighlight
+                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        onPress={() => {
+                          this.setModalVisible(!modalVisible);
+                        }}
+                      >
+                        <Text style={styles.textStyle}>Cancel</Text>
+                      </TouchableHighlight>
+                      <TouchableHighlight
+                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        onPress={() => {
+                          this.submitProject({projectName: this.state.projectName});
+                          this.setModalVisible(!modalVisible);
+                        }}
+                      >
+                        <Text style={styles.textStyle}>Create</Text>
+                      </TouchableHighlight>
+                      </View>
+                    </View>
+                  </View>
+                </WebModal>
+                )}
 
                 <FAB
                     style={styles.fab}
@@ -164,6 +230,10 @@ const styles = StyleSheet.create(
             justifyContent: 'center',
             alignItems: 'center',
           },
+        buttonContainer: {
+          flex: 1,
+          flexDirection: 'row'
+        },
         fab: {
             position: 'absolute',
             margin: 16,
@@ -195,12 +265,15 @@ const styles = StyleSheet.create(
             backgroundColor: "#F194FF",
             borderRadius: 20,
             padding: 10,
-            elevation: 2
+            elevation: 2,
+            height: 40,
+            margin: 20
           },
           textStyle: {
-            color: "white",
+            color: "black",
             fontWeight: "bold",
-            textAlign: "center"
+            textAlign: "center",
+            fontSize: 20
           },
           modalText: {
             marginBottom: 15,

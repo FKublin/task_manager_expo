@@ -4,7 +4,7 @@ import { StyleSheet,
     View,
     TextInput,
     TouchableHighlight,
-    Alert } from 'react-native';
+    Alert, Platform } from 'react-native';
 import {Button} from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../config.json';
@@ -15,7 +15,8 @@ class LoginView extends React.Component {
         super(props);
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            serverUrl: ''
         }
     }
 
@@ -26,11 +27,16 @@ class LoginView extends React.Component {
     componentDidMount = async () => {
       var token = await AsyncStorage.getItem('token');
       if(token != null)
-        this.navigateToPage('DashboardView')
+        this.navigateToPage('DashboardView');
+
+      if(Platform.OS === 'android')
+        this.setState({serverUrl: config.mobileBackendUrl});
+      else
+        this.setState({serverUrl: config.backendUrl});  
     }
 
     onLogin = (data) => {
-        fetch('http://127.0.0.1:3000/api/users/login', {
+        fetch(this.state.serverUrl + 'users/login', {
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -48,6 +54,7 @@ class LoginView extends React.Component {
               } else {
                 console.log(res.token);
                 AsyncStorage.setItem('token', res.token);
+                this.setState({email: '', password: ''});
                 //setUserToken(res.token);
                 this.navigateToPage('DashboardView')
               }
@@ -89,9 +96,9 @@ class LoginView extends React.Component {
                     password: this.state.password
                 })} title="Login" >Login</Button>
             <View style={styles.containerLinksRow}>
-            <TouchableHighlight style={styles.txtLink} onPress={() => this.navigateToPage('RestorePasswordScreen')}>
+            {/* <TouchableHighlight style={styles.txtLink} onPress={() => this.navigateToPage('RestorePasswordScreen')}>
                 <Text style={{fontWeight:'bold'}}>Forgot your password?</Text>
-            </TouchableHighlight>
+            </TouchableHighlight> */}
 
             <TouchableHighlight style={styles.txtLink} onPress={() => this.navigateToPage('SignUpView')}>
                 <Text style={{fontWeight:'bold'}}>Register</Text>
