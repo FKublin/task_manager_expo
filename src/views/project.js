@@ -15,6 +15,7 @@ import {Icon} from 'react-native-elements';
 import config from '../config.json';
 import WebModal from 'modal-react-native-web';
 import TaskModal from '../modals/taskModal';
+import OptionsModal from '../modals/optionsModal'
 
 
 
@@ -32,17 +33,21 @@ class ProjectView extends React.Component{
           taskName: '',
           pickedUser: '',
           addEmail: '',
-          modalVisible: false,
+          taskModalVisible: false,
           addUserModalVisible: false,
+          optionsModalVisible: false,
           serverUrl: '',
-          taskEndDate: ''
+          taskEndDate: '',
+          isAdmin: false
         };
+
         this.props.navigation.setOptions({
           headerRight: () => (
             <TouchableOpacity
               style={styles.touchable}
               onPress={() => {
-                //this.navigateToProductListSettings();
+                console.log(this.state.users)
+                this.setState({optionsModalVisible: true})
               }}>
               <Icon name="settings"/>
             </TouchableOpacity>
@@ -87,13 +92,22 @@ class ProjectView extends React.Component{
       await this.getData();
       }
     
+      mapUser(id) {
+        const foundUser = this.state.users.find(user => user.id === id)
+        if(foundUser)
+          return foundUser.userName
+        else
+          return 'no user found'
+      }
+
+
       removeTask = async (id) => {
         const {projectId} = this.id;
         //const {taskId} = this.taskId;
         var token = await AsyncStorage.getItem('token');
         const url =
           this.state.serverUrl + 'projects/' + projectId + '/tasks/' + id;
-        console.log(url);
+        //console.log(url);
         fetch(url, {
           method: 'DELETE',
           headers: {
@@ -109,7 +123,7 @@ class ProjectView extends React.Component{
       }
 
       setModalVisible = (visible) => {
-        this.setState({ modalVisible: visible });
+        this.setState({ taskModalVisible: visible });
       }
 
       getData = async () => {
@@ -126,9 +140,11 @@ class ProjectView extends React.Component{
         })
           .then(response => response.json())
           .then(json => {
+            console.log(json);
             this.setState({data: json.data});
             this.setState({users: json.users});
-            console.log(this.state);
+            this.setState({isAdmin: json.isAdmin})
+            //console.log(this.state);
           })
           .catch(error => console.error(error))
       };  
@@ -142,208 +158,87 @@ class ProjectView extends React.Component{
         await navigation.addListener('focus', async () => {
           this.getData();
         })
+        await this.getData();
       }
       
-      checkValue(str, max) {
-        if (str.charAt(0) !== '0' || str == '00') {
-          var num = parseInt(str);
-          if (isNaN(num) || num <= 0 || num > max) num = 1;
-          str =
-            num > parseInt(max.toString().charAt(0)) && num.toString().length == 1
-              ? '0' + num
-              : num.toString();
-        }
-        return str;
-      }
-
-      dateTimeInputChangeHandler = (e) => {
-        this.type = 'text';
-        var input = e;
-        var expr = new RegExp(/\D\/$/);
-        if (expr.test(input)) input = input.substr(0, input.length - 3);
-        var values = input.split('/').map(function (v) {
-          return v.replace(/\D/g, '');
-        });
-        if (values[1]) values[1] = this.checkValue(values[1], 31);
-        if (values[0]) values[0] = this.checkValue(values[0], 12);
-        var output = values.map(function (v, i) {
-          return v.length == 2 && i < 2 ? v + '/' : v;
-        });
-        this.setState({
-          taskEndDate: output.join('').substr(0, 14),
-        });
-      };
       
-
     render() {
         const {data} = this.state;
         const {projectId} = this.id;
         const {projectName} = this.projectName;
-        const {modalVisible} = this.state;
+        //const {modalVisible} = this.state;
 
         return (
           <View style={styles.big}>
             <Text style={styles.projectName}>{projectName}</Text>
-            
+            <Text style={styles.textHeader}>Tasks:</Text>
 
             <FlatList
               data={data}
               keyExtractor={({_id}, index) => _id}
               renderItem={({item}) => (
+                
                 <View style={styles.listContainer}>
                   <List.Section style={styles.list}>
                     <List.Accordion
                       title={item.taskName}
                     >
-                      <TouchableOpacity
+                      <List.Item title={this.state.users== null ? 'Checking...' : 'Assigned user: ' + 
+                      this.mapUser(item.taskHolder)}/>
+                      <List.Item title={'End date: ' + new Date(item.endDate).getMonth() + '/' 
+                      + new Date(item.endDate).getDate() + '/' 
+                      + new Date(item.endDate).getFullYear()} />
+                      
+                       {this.state.isAdmin && <TouchableOpacity
                         style={styles.insideBtn}
                         title="123"
                         onPress={() => {
-                          console.log('pressed');
+                          //console.log('pressed');
                           //this.taskId = item._id;
                           this.removeTask(item._id);
                         }}>
                         <Icon name="delete" color="#ffffff" />
-                      </TouchableOpacity>
+                      </TouchableOpacity> }
                     </List.Accordion>
                   </List.Section>
                 </View>
               )}
             />
-            <FAB
+
+            
+             <FAB
               style={styles.fab}
               icon="account-plus"
               onPress={() => {
                 this.setState({addUserModalVisible: true});
               }}
-            />
-            <FAB
+            /> 
+
+             <FAB
               style={styles.fab2}
               icon="pen-plus"
               onPress={() => {
                 this.setModalVisible(true);
               }}
-            />
-              {/* {//task modal
-              Platform.OS === 'android' ? 
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={modalVisible}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <Text style={styles.modalText}>Add a new task</Text>
-                      <View style={styles.inputContainer}>
-                        <TextInput style={styles.inputs}
-                        keyboardType="default"
-                        placeholder="Task name"
-                        value={this.state.taskName}
-                        onChangeText={(taskName) => this.setState({taskName})}/>
-                        
-                      </View>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.setModalVisible(!modalVisible);
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.submitTask({taskName: this.state.taskName});
-                          this.setModalVisible(!modalVisible);
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Create</Text>
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                </Modal>  : 
+            /> 
 
-                <WebModal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <Text style={styles.modalText}>Add a new task</Text>
-                      <View style={styles.inputContainer}>
-                        <TextInput style={styles.inputs}
-                        keyboardType="default"
-                        style={{
-                          textAlign: 'center',
-                          width: 300,
-                          backgroundColor: 'white',
-                          padding: 10,
-                          marginBottom: 30,
-                          borderWidth: 1,
-                          borderColor: 'black',
-                          paddingHorizontal: 30,
-                        }}
-                        placeholder="Task name"
-                        value={this.state.taskName}
-                        onChangeText={(taskName) => this.setState({taskName})}/>
-                        <TextInput
-                        keyboardType="number-pad"
-                        style={{
-                          textAlign: 'center',
-                          width: 300,
-                          backgroundColor: 'white',
-                          padding: 10,
-                          marginBottom: 30,
-                          borderWidth: 1,
-                          borderColor: 'black',
-                          paddingHorizontal: 30,
-                        }}
-                        maxLength={10}
-                        placeholder="MM/DD/YYYY"
-                        onChangeText={(e) => this.dateTimeInputChangeHandler(e)}
-                        value={this.state.taskEndDate}
-                      />
-                      <Picker selectedValue={this.state.pickedUser} onValueChange={(itemValue, itemIndex) => {
-                        this.setState({pickedUser: itemValue})
-                      }}>
-                        {this.state.users.forEach((user) => {
-                          <Picker.Item label={user.userName} value={user.userName} key={user.id} />
-                        })}
-                      </Picker>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.setModalVisible(!modalVisible);
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.submitTask({taskName: this.state.taskName, taskHolder: this.state.pickedUser});
-                          this.setModalVisible(!modalVisible);
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Create</Text>
-                      </TouchableHighlight>
-                      
-                      </View>
-                    </View>
-                  </View>
-                </WebModal>  
-          
-    } */}
 
-    <TaskModal 
+      <TaskModal 
       users={this.state.users} 
-      isVisible={this.state.modalVisible} 
-      onClose={()=> {this.setState({modalVisible: false})}} 
+      isVisible={this.state.taskModalVisible} 
+      onClose={()=> {this.setState({taskModalVisible: false})}} 
       updateData={() => {this.getData()}}
       projectId={this.id.projectId}
       serverUrl={this.state.serverUrl}
       />
+
+      <OptionsModal
+      users={this.state.users}
+      isVisible={this.state.optionsModalVisible}
+      onClose={()=> {this.setState({optionsModalVisible: false})}}
+      updateData={() => {this.getData()}}
+      projectId={this.id.projectId}
+      serverUrl={this.state.serverUrl} />
 
     
     {//user modal
@@ -445,6 +340,14 @@ const styles = StyleSheet.create({
     projectName: {
       textAlign: 'center',
       paddingTop: 30,
+      fontSize: 25,
+      paddingBottom: 20,
+    },
+    textHeader: {
+      textAlign: 'left',
+      fontWeight: 'bold',
+      paddingTop: 30,
+      paddingLeft: 10,
       fontSize: 25,
       paddingBottom: 20,
     },

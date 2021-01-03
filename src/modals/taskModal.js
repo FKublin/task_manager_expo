@@ -32,7 +32,9 @@ class TaskModal extends React.Component {
             'auth-token': token
           },
           body: JSON.stringify({
-            taskName: this.state.taskName
+            taskName: data.taskName,
+            endDate: data.endDate,
+            taskHolder: data.taskHolder
           }),
         }).then(this.props.updateData())
         .catch(error => console.error(error));;
@@ -157,14 +159,18 @@ class TaskModal extends React.Component {
                       <Picker selectedValue={this.state.pickedUser} onValueChange={(itemValue, itemIndex) => {
                         this.setState({pickedUser: itemValue})
                       }}>
-                        {this.props.users.forEach((user) => {
-                          <Picker.Item label={user.userName} value={user.userName} key={user.id} />
-                        })}
+                        {
+                          this.props.users.map((user) => {
+                            console.log('userName: '+ user.userName);
+                            return <Picker.Item label={user.userName} value={user.id} />
+                          })
+                        }
                       </Picker>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
                           //this.setModalVisible(!modalVisible);
+                          this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
                           this.props.onClose();
                         }}
                       >
@@ -173,7 +179,7 @@ class TaskModal extends React.Component {
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
-                          this.submitTask({taskName: this.state.taskName});
+                          this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
                           this.props.onClose();
                         }}
                       >
