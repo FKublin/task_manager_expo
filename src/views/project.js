@@ -10,12 +10,14 @@ import {
   Platform, Modal, Picker
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {List, Checkbox, FAB} from 'react-native-paper';
+import {List, FAB} from 'react-native-paper';
 import {Icon} from 'react-native-elements';
 import config from '../config.json';
 import WebModal from 'modal-react-native-web';
 import TaskModal from '../modals/taskModal';
 import OptionsModal from '../modals/optionsModal'
+import UserModal from '../modals/userModal';
+import CommentsSection from '../components/comment'
 
 
 
@@ -30,14 +32,10 @@ class ProjectView extends React.Component{
         this.state = {
           data: [],
           users: [],
-          taskName: '',
-          pickedUser: '',
-          addEmail: '',
           taskModalVisible: false,
           addUserModalVisible: false,
           optionsModalVisible: false,
           serverUrl: '',
-          taskEndDate: '',
           isAdmin: false
         };
 
@@ -69,7 +67,6 @@ class ProjectView extends React.Component{
         }),
       });
 
-      
       await this.getData();
       }
 
@@ -100,6 +97,26 @@ class ProjectView extends React.Component{
           return 'no user found'
       }
 
+      checkTask = async (id) => {
+        const {projectId} = this.id;
+        var token = await AsyncStorage.getItem('token');
+        var token = await AsyncStorage.getItem('token');
+        const url =
+          this.state.serverUrl + 'projects/' + projectId + '/tasks/' + id;
+        //console.log(url);
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'auth-token': token,
+          },
+        })
+          .then(response => response.json())
+          .then(json => {}).then(this.getData())
+          .catch(error => console.error(error));
+        await this.getData();
+      }
 
       removeTask = async (id) => {
         const {projectId} = this.id;
@@ -169,36 +186,49 @@ class ProjectView extends React.Component{
         //const {modalVisible} = this.state;
 
         return (
-          <View style={styles.big}>
+          <View style={styles.big }>
             <Text style={styles.projectName}>{projectName}</Text>
-            <Text style={styles.textHeader}>Tasks:</Text>
+            <Text style={styles.textHeader}>My tasks:</Text>
 
             <FlatList
               data={data}
               keyExtractor={({_id}, index) => _id}
               renderItem={({item}) => (
                 
-                <View style={styles.listContainer}>
+                <View style={[styles.listContainer, item.isCompleted ? styles.isCompleted : 
+                new Date(item.endDate) < Date.now() ? styles.isPastDate : null]}>
                   <List.Section style={styles.list}>
                     <List.Accordion
                       title={item.taskName}
                     >
                       <List.Item title={this.state.users== null ? 'Checking...' : 'Assigned user: ' + 
                       this.mapUser(item.taskHolder)}/>
-                      <List.Item title={'End date: ' + new Date(item.endDate).getMonth() + '/' 
-                      + new Date(item.endDate).getDate() + '/' 
-                      + new Date(item.endDate).getFullYear()} />
-                      
+                      <List.Item title={'End date: ' + new Date(item.endDate).toString()} />
+
+                      <List.Item title='Comments: ' />
+
+                      <CommentsSection serverUrl={this.state.serverUrl} projectId={this.id.projectId} 
+                      taskId={item._id} updateData={()=>{this.getData()}} data={item.comments} mapUser={(id) => this.mapUser(id)}/>
+
+
                        {this.state.isAdmin && <TouchableOpacity
-                        style={styles.insideBtn}
+                        style={styles.insideButton}
                         title="123"
                         onPress={() => {
-                          //console.log('pressed');
-                          //this.taskId = item._id;
                           this.removeTask(item._id);
                         }}>
                         <Icon name="delete" color="#ffffff" />
                       </TouchableOpacity> }
+
+                      {item.isCompleted==false && <TouchableOpacity
+                        style={styles.insideButton2}
+                        title="123"
+                        onPress={() => {
+                          this.checkTask(item._id);
+                        }}>
+                        <Icon name="check" color="#ffffff" />
+                      </TouchableOpacity>}
+
                     </List.Accordion>
                   </List.Section>
                 </View>
@@ -240,80 +270,14 @@ class ProjectView extends React.Component{
       projectId={this.id.projectId}
       serverUrl={this.state.serverUrl} />
 
-    
-    {//user modal
-    Platform.OS === 'web' ?
-              <WebModal
-                animationType="slide"
-                transparent={true}
-                visible={this.state.addUserModalVisible}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <Text style={styles.modalText}>Add a new user</Text>
-                      <View style={styles.inputContainer}>
-                        <TextInput style={styles.inputs}
-                        keyboardType="default"
-                        placeholder="User's email"
-                        value={this.state.use}
-                        onChangeText={(email) => this.setState({addEmail: email})}/>
-                      </View>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.setState({addUserModalVisible: false});
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.addUser({email: this.state.addEmail});
-                          this.setState({addUserModalVisible: false});
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Add</Text>
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                </WebModal>  : 
-              <Modal
-              animationType="slide"
-              transparent={true}
-              visible={this.state.addUserModalVisible}
-              >
-                <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Add a new user</Text>
-                    <View style={styles.inputContainer}>
-                      <TextInput style={styles.inputs}
-                      keyboardType="default"
-                      placeholder="User's email"
-                      value={this.state.use}
-                      onChangeText={(email) => this.setState({addEmail: email})}/>
-                    </View>
-                    <TouchableHighlight
-                      style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                      onPress={() => {
-                        this.setState({addUserModalVisible: false});
-                      }}
-                    >
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                      onPress={() => {
-                        this.addUser({email: this.state.addEmail});
-                        this.setState({addUserModalVisible: false});
-                      }}
-                    >
-                      <Text style={styles.textStyle}>Add</Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              </Modal>                
-    }
+      <UserModal
+      isVisible={this.state.addUserModalVisible}
+      onClose={()=> {this.setState({addUserModalVisible: false})}}
+      updateData={()=> {this.getData()}}
+      projectId={this.id.projectId}
+      serverUrl={this.state.serverUrl} />
+
+  
           </View>
         );
     }
@@ -325,14 +289,20 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#ffffff',
-      width: '90%',
+      width: '80%',
       borderRadius: 30,
       marginBottom: 20,
       marginLeft: 'auto',
       marginRight: 'auto',
     },
+    isCompleted: {
+      backgroundColor: '#73E68A'
+    },
+    isPastDate: {
+      backgroundColor: '#ff4d4d'
+    },
     list: {
-      width: '87%',
+      width: '80%',
     },
     checkbox: {
       height: 120,
@@ -373,7 +343,7 @@ const styles = StyleSheet.create({
       height: 50,
       paddingTop: 12,
     },
-    insideBtn: {
+    insideButton: {
       position: 'absolute',
       width: 40,
       height: 40,
@@ -383,6 +353,16 @@ const styles = StyleSheet.create({
       bottom: 10,
       justifyContent: 'center',
     },
+    insideButton2: {
+      position: 'absolute',
+      width: 40,
+      height: 40,
+      borderRadius: 40,
+      backgroundColor: '#73E68A',
+      right: -35,
+      bottom: 65,
+      justifyContent: 'center',
+    },    
     centeredView: {
       flex: 1,
       justifyContent: "center",

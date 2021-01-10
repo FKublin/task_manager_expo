@@ -17,10 +17,12 @@ class TaskModal extends React.Component {
         super(props)
         this.state = {
             taskName: '',
-            pickedUser: '',
+            pickedUser: this.props.users[0],
             taskEndDate: ''
         }
     }
+
+    
 
     submitTask = async (data) => {
         var token = await AsyncStorage.getItem('token');
@@ -54,19 +56,21 @@ class TaskModal extends React.Component {
             }
             return str;
           }
+
+          
     
           dateTimeInputChangeHandler = (e) => {
             this.type = 'text';
             var input = e;
-            var expr = new RegExp(/\D\/$/);
+            var expr = new RegExp(/\D\-$/);
             if (expr.test(input)) input = input.substr(0, input.length - 3);
-            var values = input.split('/').map(function (v) {
+            var values = input.split('-').map(function (v) {
               return v.replace(/\D/g, '');
             });
-            if (values[1]) values[1] = this.checkValue(values[1], 31);
-            if (values[0]) values[0] = this.checkValue(values[0], 12);
+            if (values[1]) values[1] = this.checkValue(values[1], 12);
+            if (values[0]) values[0] = this.checkValue(values[0], 31);
             var output = values.map(function (v, i) {
-              return v.length == 2 && i < 2 ? v + '/' : v;
+              return v.length == 2 && i < 2 ? v + '-' : v;
             });
             this.setState({
               taskEndDate: output.join('').substr(0, 14),
@@ -89,15 +93,52 @@ class TaskModal extends React.Component {
                       <View style={styles.inputContainer}>
                         <TextInput style={styles.inputs}
                         keyboardType="default"
+                        style={{
+                          textAlign: 'center',
+                          width: 300,
+                          backgroundColor: 'white',
+                          padding: 10,
+                          marginBottom: 30,
+                          borderWidth: 1,
+                          borderColor: 'black',
+                          paddingHorizontal: 30,
+                        }}
                         placeholder="Task name"
                         value={this.state.taskName}
                         onChangeText={(taskName) => this.setState({taskName})}/>
-                        
-                      </View>
+                        <TextInput
+                        keyboardType="number-pad"
+                        style={{
+                          textAlign: 'center',
+                          width: 300,
+                          backgroundColor: 'white',
+                          padding: 10,
+                          marginBottom: 30,
+                          borderWidth: 1,
+                          borderColor: 'black',
+                          paddingHorizontal: 30,
+                        }}
+                        maxLength={10}
+                        placeholder="DD-MM-YYYY"
+                        onChangeText={(e) => this.dateTimeInputChangeHandler(e)}
+                        value={this.state.taskEndDate}
+                      />
+                      <Picker selectedValue={this.props.users[0].id} onValueChange={(itemValue, itemIndex) => {
+                        this.setState({pickedUser: itemValue})
+                      }}>
+                        {
+                          this.props.users.map((user) => {
+                            //console.log('userName: '+ user.userName);
+                            return <Picker.Item label={user.userName} value={user.id} />
+                          })
+                        }
+                      </Picker>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
-                          this.setModalVisible(!modalVisible);
+                          //this.setModalVisible(!modalVisible);
+                          this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
+                          this.props.onClose();
                         }}
                       >
                         <Text style={styles.textStyle}>Cancel</Text>
@@ -105,12 +146,14 @@ class TaskModal extends React.Component {
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
-                          this.submitTask({taskName: this.state.taskName});
-                          this.setModalVisible(!modalVisible);
+                          this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
+                          this.props.onClose();
                         }}
                       >
                         <Text style={styles.textStyle}>Create</Text>
                       </TouchableHighlight>
+                      
+                      </View>
                     </View>
                   </View>
                 </Modal>  : 
@@ -152,7 +195,7 @@ class TaskModal extends React.Component {
                           paddingHorizontal: 30,
                         }}
                         maxLength={10}
-                        placeholder="MM/DD/YYYY"
+                        placeholder="DD-MM-YYYY"
                         onChangeText={(e) => this.dateTimeInputChangeHandler(e)}
                         value={this.state.taskEndDate}
                       />
@@ -161,8 +204,8 @@ class TaskModal extends React.Component {
                       }}>
                         {
                           this.props.users.map((user) => {
-                            console.log('userName: '+ user.userName);
-                            return <Picker.Item label={user.userName} value={user.id} />
+                            //console.log('userName: '+ user.userName);
+                            return <Picker.Item label={user.userName} value={user.id} key={user.id}/>
                           })
                         }
                       </Picker>

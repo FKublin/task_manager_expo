@@ -7,7 +7,7 @@ import {View,
         StyleSheet, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
-import {Icon} from 'react-native-elements';
+import {Icon, Button} from 'react-native-elements';
 import config from '../config.json';
 
 class OptionsModal extends React.Component {
@@ -47,97 +47,6 @@ class OptionsModal extends React.Component {
                 animationType='slide'
                 transparent={true}
                 isVisible={this.props.isVisible}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                        <FlatList
-                            data={this.props.users}
-                            
-                            keyExtractor={({_id}, index) => _id}
-                            renderItem={({item}) => (
-                            <View style={{
-                                paddingVertical: 15,
-                                paddingHorizontal: 10,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }}>
-                                <Text style={styles.textStyle}>{item.displayName}</Text>
-                                <Icon name="delete" color="#ffffff" onPress={() => {this.removeUser(item._id)}}/>
-
-                            </View>
-                            )}
-                        />
-
-                            <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                            onPress={() => {
-                            //this.setModalVisible(!modalVisible);
-                            this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
-                            this.props.onClose();
-                            }}
-                        >
-                            <Text style={styles.textStyle}>Cancel</Text>
-                        </TouchableHighlight>
-                        </View>
-                        </View> 
-                   
-
-                </Modal>
-
-                :
-
-                // <WebModal
-                // animationType='slide'
-                // transparent={true}
-                // isVisible={this.props.isVisible}>
-                //     <View style={styles.centeredView}>
-                //         <View style={styles.modalView}>
-                //         <FlatList
-                //             data={this.props.users}
-                            
-                //             keyExtractor={({id}, index) => id}
-                //             renderItem={({item}) => (
-                //             <View style={{
-                //                 paddingVertical: 15,
-                //                 paddingHorizontal: 10,
-                //                 flexDirection: "row",
-                //                 justifyContent: "space-between",
-                //                 alignItems: "center"
-                //             }}>
-                //                 <Text style={styles.textStyle}>{item.displayName}</Text>
-                //                 <TouchableOpacity
-                //                 style={styles.insideBtn}
-                //                 title="123"
-                //                 onPress={() => {                               
-                //                     this.removeUser(item.id);
-                //                 }}>
-                //                 <Icon name="delete" color="#ffffff" />
-                //                 </TouchableOpacity>
-                //             </View>
-                //             )}
-                //         />
-
-                //             <TouchableHighlight
-                //             style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                //             onPress={() => {
-                //             //this.setModalVisible(!modalVisible);
-                //             this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
-                //             this.props.onClose();
-                //             }}
-                //         >
-                //             <Text style={styles.textStyle}>Cancel</Text>
-                //         </TouchableHighlight>
-                //         </View>
-                //         </View> 
-                   
-
-                // </WebModal>
-
-                <WebModal
-                animationType="slide"
-                transparent={true}
-                visible={this.props.isVisible}
-                >
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                       
@@ -146,22 +55,22 @@ class OptionsModal extends React.Component {
                             
                             keyExtractor={({id}, index) => id}
                             renderItem={({item}) => (
-                            <View style={{
-                                paddingVertical: 20,
-                                paddingHorizontal: 50,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }}>
-                                <Text style={styles.textStyle}>{item.userName}</Text>
-                                <TouchableOpacity
+                            <View style={styles.userList}>
+                                <Text style={{...styles.modalText}, {padding: 10}}>{item.userName}</Text>
+                                {/* <TouchableOpacity
                                 style={styles.insideBtn}
                                 title="123"
                                 onPress={() => {                               
                                     this.removeUser(item.id);
                                 }}>
                                 <Icon name="delete" color="#ffffff" />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
+                                <Button icon={
+                                  <Icon name='delete' color="#ffffff" />
+                                } 
+                                onPress={() => {                               
+                                  this.removeUser(item.id);
+                              }}/>
                             </View>
                             )}
                         />
@@ -176,7 +85,64 @@ class OptionsModal extends React.Component {
                           this.props.onClose();
                         }}
                       >
-                        <Text style={styles.textStyle}>Cancel</Text>
+                        <Text style={styles.modalText}>Cancel</Text>
+                      </TouchableHighlight>
+
+                      
+                      
+                    </View>
+                  </View>
+                </Modal>
+
+                :
+
+                <WebModal
+                animationType="slide"
+                transparent={true}
+                visible={this.props.isVisible}
+                hasBackdrop={true}
+                backdropColor='black'
+                backdropOpacity='0.70'
+                >
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      
+                    <FlatList
+                            data={this.props.users}
+                            
+                            keyExtractor={({id}, index) => id}
+                            renderItem={({item}) => (
+                            <View style={styles.userList}>
+                                <Text style={{...styles.modalText}, {padding: 10}}>{item.userName}</Text>
+                                {/* <TouchableOpacity
+                                style={styles.insideBtn}
+                                title="123"
+                                onPress={() => {                               
+                                    this.removeUser(item.id);
+                                }}>
+                                <Icon name="delete" color="#ffffff" />
+                                </TouchableOpacity> */}
+                                <Button icon={
+                                  <Icon name='delete' color="#ffffff" />
+                                } 
+                                onPress={() => {                               
+                                  this.removeUser(item.id);
+                              }}/>
+                            </View>
+                            )}
+                        />
+
+
+
+                      <TouchableHighlight
+                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        onPress={() => {
+                          //this.setModalVisible(!modalVisible);
+                          this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
+                          this.props.onClose();
+                        }}
+                      >
+                        <Text style={styles.modalText}>Cancel</Text>
                       </TouchableHighlight>
 
                       
@@ -203,19 +169,17 @@ const styles = StyleSheet.create({
         marginTop: 22
     },
     modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 50,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5
+      justifyContent: 'center',  
+      alignItems: 'center',   
+      backgroundColor : "white",   
+      height: 300 ,  
+      width: '80%',  
+      borderRadius:10,  
+      borderWidth: 1,  
+      borderColor: '#fff',    
+      marginTop: 80,  
+      marginLeft: 40,  
+      //elevation: 5
     },
     insideBtn: {
         position: 'absolute',
@@ -227,8 +191,17 @@ const styles = StyleSheet.create({
         bottom: 10,
         justifyContent: 'center',
       },
+      userList: {
+        flex: 1,
+        width: '50%',                                
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+      },
       modalText: {
-        marginBottom: 15,
+        //marginBottom: 15,
         textAlign: "center"
       },
 })
