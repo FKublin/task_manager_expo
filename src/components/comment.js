@@ -13,6 +13,7 @@ class CommentsSection extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            comments: [],
             commentText: ''
         }
     }
@@ -37,22 +38,21 @@ class CommentsSection extends React.Component {
         
     }    
     componentDidMount() {
-        console.log('comments: ')
-        console.log(this.props.data)
+      this.setState({comments: this.props.data})
     }
 
     render() {
         return(
         <View>
-            {this.props.data ? 
+            {this.props.data.length > 0 ? 
             <FlatList
             data={this.props.data}
             keyExtractor={({_id}, index) => _id}
-            renderItem={({comment}) => (
-                
-            <View>
-                <Text>{this.props.mapUser(comment.commenter) + ' : ' + comment.addedDate.toString()}</Text>
-                <Text>{comment.commentText}</Text>
+            renderItem={({item}) => (
+                // <Text>{item.commentText}</Text>
+            <View style={{flex:1, justifyContent:'space-between'}}>
+                <Text>{this.props.mapUser(item.commenter) + ' : ' + item.addedDate.toString()}</Text>
+                <Text>{item.commentText}</Text>
             </View>
             )} /> :
             <Text>There are currently no comments</Text>     

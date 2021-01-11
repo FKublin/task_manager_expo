@@ -207,8 +207,8 @@ class ProjectView extends React.Component{
 
                       <List.Item title='Comments: ' />
 
-                      <CommentsSection serverUrl={this.state.serverUrl} projectId={this.id.projectId} 
-                      taskId={item._id} updateData={()=>{this.getData()}} data={item.comments} mapUser={(id) => this.mapUser(id)}/>
+                      <CommentsSection data={item.comments} serverUrl={this.state.serverUrl} projectId={this.id.projectId} 
+                      taskId={item._id} updateData={()=>{this.getData()}}  mapUser={(id) => this.mapUser(id)}/>
 
 
                        {this.state.isAdmin && <TouchableOpacity
