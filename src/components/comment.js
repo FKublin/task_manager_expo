@@ -33,7 +33,7 @@ class CommentsSection extends React.Component {
         }).then(this.props.updateData())
         .catch(error => console.error(error));;
   
-        
+        this.setState({commentText: ''});
         await this.props.updateData();
         
     }    

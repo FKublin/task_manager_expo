@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, 
-        Modal, 
+        Modal,
         Text, 
         TextInput, 
         TouchableHighlight, 
@@ -8,6 +8,8 @@ import {View,
         StyleSheet, Picker} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
+import {Picker as MobilePicker} from '@react-native-picker/picker'
+//import Modal from 'react-native-modal';
 import config from '../config.json';
 
 class TaskModal extends React.Component {
@@ -17,7 +19,7 @@ class TaskModal extends React.Component {
         super(props)
         this.state = {
             taskName: '',
-            pickedUser: this.props.users[0],
+            pickedUser: '',
             taskEndDate: ''
         }
     }
@@ -81,82 +83,7 @@ class TaskModal extends React.Component {
         return(
             <View>
             {//task modal
-                Platform.OS === 'android' ? 
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={this.props.isVisible}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <Text style={styles.modalText}>Add a new task</Text>
-                      <View style={styles.inputContainer}>
-                        <TextInput style={styles.inputs}
-                        keyboardType="default"
-                        style={{
-                          textAlign: 'center',
-                          width: 300,
-                          backgroundColor: 'white',
-                          padding: 10,
-                          marginBottom: 30,
-                          borderWidth: 1,
-                          borderColor: 'black',
-                          paddingHorizontal: 30,
-                        }}
-                        placeholder="Task name"
-                        value={this.state.taskName}
-                        onChangeText={(taskName) => this.setState({taskName})}/>
-                        <TextInput
-                        keyboardType="number-pad"
-                        style={{
-                          textAlign: 'center',
-                          width: 300,
-                          backgroundColor: 'white',
-                          padding: 10,
-                          marginBottom: 30,
-                          borderWidth: 1,
-                          borderColor: 'black',
-                          paddingHorizontal: 30,
-                        }}
-                        maxLength={10}
-                        placeholder="DD-MM-YYYY"
-                        onChangeText={(e) => this.dateTimeInputChangeHandler(e)}
-                        value={this.state.taskEndDate}
-                      />
-                      <Picker selectedValue={this.props.users[0].id} onValueChange={(itemValue, itemIndex) => {
-                        this.setState({pickedUser: itemValue})
-                      }}>
-                        {
-                          this.props.users.map((user) => {
-                            //console.log('userName: '+ user.userName);
-                            return <Picker.Item label={user.userName} value={user.id} />
-                          })
-                        }
-                      </Picker>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          //this.setModalVisible(!modalVisible);
-                          this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Create</Text>
-                      </TouchableHighlight>
-                      
-                      </View>
-                    </View>
-                  </View>
-                </Modal>  : 
+                Platform.OS === 'web' ? 
 
                 <WebModal
                 animationType="slide"
@@ -232,7 +159,68 @@ class TaskModal extends React.Component {
                       </View>
                     </View>
                   </View>
-                </WebModal>                 
+                </WebModal> 
+                :
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={this.props.isVisible}
+                >
+                  <View style={styles.centeredView}>
+                     <View style={styles.modalView}> 
+                      <Text style={styles.modalText}>Add a new task</Text>
+                      <View style={styles.inputContainer}>
+
+                      <TextInput style={styles.inputs}
+                        keyboardType="default"
+                        placeholder="Task name"
+                        value={this.state.addEmail}
+                        onChangeText={(taskNameText) => this.setState({taskName: taskNameText})}/>
+                      <TextInput style={styles.inputs}
+                        keyboardType="number-pad"
+                        maxLength={10}
+                        placeholder="DD-MM-YYYY"
+                        value={this.state.taskEndDate}
+                        onChangeText={(e) => this.dateTimeInputChangeHandler(e)}/>
+                      <MobilePicker selectedValue={this.state.pickedUser} onValueChange={(itemValue, itemIndex) => {
+                        this.setState({pickedUser: itemValue})
+                      }}>
+                        {
+                          this.props.users.map((user) => {
+                            //console.log('userName: '+ user.userName);
+                            return <MobilePicker.Item label={user.userName} value={user.id} key={user.id}/>
+                          })
+                        }
+                      </MobilePicker>
+
+                        <View style={{flexDirection:'row'}}>
+                          <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                            onPress={() => {
+                              //this.setModalVisible(!modalVisible);
+                              this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
+                              this.props.onClose();
+                            }}
+                            >
+                            <Text style={styles.textStyle}>Cancel</Text>
+                          </TouchableHighlight>
+
+                          <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                            onPress={() => {
+                              this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
+                              this.props.onClose();
+                            }}
+                            >
+                            <Text style={styles.textStyle}>Create</Text>
+                          </TouchableHighlight>
+                        </View>
+                      </View>                     
+                    </View> 
+                  </View>
+                </Modal> 
+
+                
             }
             </View>
         )
@@ -245,16 +233,19 @@ export default TaskModal;
 
 const styles = StyleSheet.create({
     centeredView: {
-        flex: 1,
+        //flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 22
+        marginTop: 22,
+        flexDirection: 'column'
       },
       modalView: {
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
+        height: 300,
+        width: "80%",
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -263,7 +254,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 5
+        elevation: 5,
+        flexDirection: 'column'
       },
       openButton: {
         backgroundColor: "#F194FF",
@@ -272,7 +264,7 @@ const styles = StyleSheet.create({
         elevation: 2
       },
       textStyle: {
-        color: "white",
+        color: "black",
         fontWeight: "bold",
         textAlign: "center"
       },
@@ -282,8 +274,11 @@ const styles = StyleSheet.create({
       },
       inputs:{
         height: 50,
-        marginLeft:16,
-        flex:1,
+        width:150,
+        
+        marginLeft: 16,
+        borderWidth: 1,
+        //flex:1,
       },
       inputContainer: {
         backgroundColor: '#FFFFFF',

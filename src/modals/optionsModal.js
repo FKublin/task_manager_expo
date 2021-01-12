@@ -46,7 +46,7 @@ class OptionsModal extends React.Component {
                 <Modal
                 animationType='slide'
                 transparent={true}
-                isVisible={this.props.isVisible}>
+                visible={this.props.isVisible}>
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                       
@@ -75,8 +75,6 @@ class OptionsModal extends React.Component {
                             )}
                         />
 
-
-
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
@@ -86,10 +84,7 @@ class OptionsModal extends React.Component {
                         }}
                       >
                         <Text style={styles.modalText}>Cancel</Text>
-                      </TouchableHighlight>
-
-                      
-                      
+                      </TouchableHighlight>                    
                     </View>
                   </View>
                 </Modal>
@@ -173,7 +168,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',   
       backgroundColor : "white",   
       height: 300 ,  
-      width: '80%',  
+      width: '50%',  
       borderRadius:10,  
       borderWidth: 1,  
       borderColor: '#fff',    

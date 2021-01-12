@@ -4,7 +4,7 @@ import {View,
         Text,  
         TouchableHighlight, TextInput,
         Platform, 
-        StyleSheet, FlatList} from 'react-native';
+        StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
 import {Icon, Button} from 'react-native-elements';
@@ -89,6 +89,7 @@ class UserModal extends React.Component {
                         placeholder="User's email"
                         value={this.state.addEmail}
                         onChangeText={(email) => this.setState({addEmail: email})}/>
+
                       </View>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}

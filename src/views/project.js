@@ -220,7 +220,7 @@ class ProjectView extends React.Component{
                         <Icon name="delete" color="#ffffff" />
                       </TouchableOpacity> }
 
-                      {item.isCompleted==false && <TouchableOpacity
+                      {item.isCompleted==false && item.isMine && <TouchableOpacity
                         style={styles.insideButton2}
                         title="123"
                         onPress={() => {
@@ -236,21 +236,21 @@ class ProjectView extends React.Component{
             />
 
             
-             <FAB
+             {this.state.isAdmin && <FAB
               style={styles.fab}
               icon="account-plus"
               onPress={() => {
                 this.setState({addUserModalVisible: true});
               }}
-            /> 
+            />} 
 
-             <FAB
+             {this.state.isAdmin && <FAB
               style={styles.fab2}
               icon="pen-plus"
               onPress={() => {
                 this.setModalVisible(true);
               }}
-            /> 
+            />} 
 
 
       <TaskModal 
