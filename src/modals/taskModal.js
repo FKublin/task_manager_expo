@@ -20,7 +20,8 @@ class TaskModal extends React.Component {
         this.state = {
             taskName: '',
             pickedUser: '',
-            taskEndDate: ''
+            taskEndDate: '',
+            userStory: ''
         }
     }
 
@@ -38,7 +39,8 @@ class TaskModal extends React.Component {
           body: JSON.stringify({
             taskName: data.taskName,
             endDate: data.endDate,
-            taskHolder: data.taskHolder
+            taskHolder: data.taskHolder,
+            userStory: data.userStory
           }),
         }).then(this.props.updateData())
         .catch(error => console.error(error));;
@@ -109,6 +111,21 @@ class TaskModal extends React.Component {
                         placeholder="Task name"
                         value={this.state.taskName}
                         onChangeText={(taskName) => this.setState({taskName})}/>
+                        <TextInput style={styles.inputs}
+                        keyboardType="default"
+                        style={{
+                          textAlign: 'center',
+                          width: 300,
+                          backgroundColor: 'white',
+                          padding: 10,
+                          marginBottom: 30,
+                          borderWidth: 1,
+                          borderColor: 'black',
+                          paddingHorizontal: 30,
+                        }}
+                        placeholder="User story"
+                        value={this.state.userStory}
+                        onChangeText={(userStory) => this.setState({userStory})}/>
                         <TextInput
                         keyboardType="number-pad"
                         style={{
@@ -149,7 +166,7 @@ class TaskModal extends React.Component {
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
-                          this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
+                          this.submitTask({taskName: this.state.taskName, userStory: this.state.userStory, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
                           this.props.onClose();
                         }}
                       >
@@ -169,13 +186,20 @@ class TaskModal extends React.Component {
                   <View style={styles.centeredView}>
                      <View style={styles.modalView}> 
                       <Text style={styles.modalText}>Add a new task</Text>
+
                       <View style={styles.inputContainer}>
 
                       <TextInput style={styles.inputs}
                         keyboardType="default"
                         placeholder="Task name"
-                        value={this.state.addEmail}
+                        value={this.state.taskName}
                         onChangeText={(taskNameText) => this.setState({taskName: taskNameText})}/>
+                        <TextInput style={styles.inputs}
+                        keyboardType="default"
+                        style={styles.inputs}
+                        placeholder="User story"
+                        value={this.state.userStory}
+                        onChangeText={(userStory) => this.setState({userStory})}/>
                       <TextInput style={styles.inputs}
                         keyboardType="number-pad"
                         maxLength={10}
@@ -208,7 +232,7 @@ class TaskModal extends React.Component {
                           <TouchableHighlight
                             style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                             onPress={() => {
-                              this.submitTask({taskName: this.state.taskName, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
+                              this.submitTask({taskName: this.state.taskName, userStory: this.state.userStory, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
                               this.props.onClose();
                             }}
                             >
@@ -244,7 +268,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
-        height: 300,
+        height: 350,
         width: "80%",
         alignItems: "center",
         shadowColor: "#000",
@@ -261,7 +285,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#F194FF",
         borderRadius: 20,
         padding: 10,
-        elevation: 2
+        elevation: 2,
+        marginTop: 10
       },
       textStyle: {
         color: "black",
@@ -283,7 +308,7 @@ const styles = StyleSheet.create({
       inputContainer: {
         backgroundColor: '#FFFFFF',
         borderRadius: 5,
-        height: 50,
+        //height: 50,
         marginBottom: 15,
         flexDirection: 'column'
       },

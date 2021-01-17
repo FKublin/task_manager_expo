@@ -25,7 +25,7 @@ class ProjectView extends React.Component{
     id = {projectId: this.props.route.params.user};
     projectName = {projectName: this.props.route.params.name};
     taskId = '';
-
+    
   
     constructor(props) {
         super(props);
@@ -158,13 +158,17 @@ class ProjectView extends React.Component{
           .then(response => response.json())
           .then(json => {
             console.log(json);
-            this.setState({data: json.data});
+            //this.setState({data: json.data}); 
+            const sortedTasks = json.data.sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
+            this.setState({data: sortedTasks});
             this.setState({users: json.users});
             this.setState({isAdmin: json.isAdmin})
             //console.log(this.state);
           })
           .catch(error => console.error(error))
-      };  
+      };
+      
+      
 
       componentDidMount = async () => {
         if(Platform.OS === 'android')
@@ -188,7 +192,7 @@ class ProjectView extends React.Component{
         return (
           <View style={styles.big }>
             <Text style={styles.projectName}>{projectName}</Text>
-            <Text style={styles.textHeader}>My tasks:</Text>
+            <Text style={styles.textHeader}>Tasks:</Text>
 
             <FlatList
               data={data}
@@ -203,8 +207,9 @@ class ProjectView extends React.Component{
                     >
                       <List.Item title={this.state.users== null ? 'Checking...' : 'Assigned user: ' + 
                       this.mapUser(item.taskHolder)}/>
-                      <List.Item title={'End date: ' + new Date(item.endDate).toString()} />
-
+                      <List.Item title={'User story: "' + item.userStory +'"' }/>
+                      <List.Item title={'End date: ' + new Date(item.endDate).getDate() + '/' + (parseInt(new Date(item.endDate).getMonth(), 10) + 1) + '/' + new Date(item.endDate).getFullYear()}/>
+                      
                       <List.Item title='Comments: ' />
 
                       <CommentsSection data={item.comments} serverUrl={this.state.serverUrl} projectId={this.id.projectId} 
@@ -325,17 +330,18 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       justifyContent: 'center',
       flex: 1,
+      backgroundColor: "#007eec"
     },
     fab: {
       position: 'absolute',
-      margin: 16,
-      right: 10,
+      margin: 12,
+      right: 5,
       bottom: 10,
     },
     fab2: {
       position: 'absolute',
-      margin: 16,
-      right: 10,
+      margin: 12,
+      right: 5,
       bottom: 90,
     },
     touchable: {
