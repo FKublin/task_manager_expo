@@ -50,20 +50,26 @@ class CommentsSection extends React.Component {
             keyExtractor={({_id}, index) => _id}
             renderItem={({item}) => (
                 // <Text>{item.commentText}</Text>
-            <View style={{flex:1, justifyContent:'space-between'}}>
-                <Text>{this.props.mapUser(item.commenter) + ' : ' + item.addedDate.toString()}</Text>
-                <Text>{item.commentText}</Text>
+            <View style={{flexDirection:'column', justifyContent: 'flex-start', marginBottom: 10}}>
+                <Text style={{textAlign:'left'}}>{this.props.mapUser(item.commenter) + ' : ' + item.addedDate.toString()}</Text>
+                <Text style={{textAlign:'left', fontSize: 15}}>{item.commentText}</Text>
             </View>
             )} /> :
             <Text>There are currently no comments</Text>     
             }
-
+            <View style={{flexDirection: 'row', height: 60, alignContent: 'space-between', paddingTop: 20}}>
             <TextInput 
             style={styles.inputs} 
             keyboardType="default" 
             value={this.state.commentText} 
             onChangeText={(commentText) => {this.setState({commentText})}}/> 
-            <Button style={styles.button} onPress={()=> this.postComment()}>Post</Button>
+            <Button style={styles.button} mode="contained" onPress={() => this.postComment()} title="Post" >Post</Button>
+            {/* <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                            onPress={() => {()=> this.postComment()}}>
+                            <Text style={styles.textStyle}>Create</Text>
+                          </TouchableHighlight> */}
+            </View>
         </View>
         )
     }
@@ -74,18 +80,23 @@ export default CommentsSection;
 const styles = StyleSheet.create({
     inputs:{
         //textAlign: 'center',
-        width: 300,
+        width: 200,
+        height: 45,
+        color: 'black',
         backgroundColor: 'white',
-        padding: 10,
+        
         marginBottom: 30,
+        marginRight: 10,
         borderWidth: 1,
         borderColor: 'black',
-        paddingHorizontal: 30,
+        paddingHorizontal: 10,
       },
       button:{
-        width: '85%',
-        height: 60,
+        width: 50,
+        height: 45,
         justifyContent: 'center',
+        alignContent: 'center',
         borderRadius: 40,
-      }
+      },
+      
 })

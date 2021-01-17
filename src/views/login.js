@@ -85,20 +85,18 @@ class LoginView extends React.Component {
                 <Text style={styles.divErrorFont}>{this.state.nameError}</Text>
             </View>
             )}
-            {/* <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.onLogin({
+            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => this.onLogin({
                 email: this.state.email,
                 password: this.state.password
             })}>
-            <Text style={styles.loginText}>Login</Text>
-            </TouchableHighlight> */}
-            <Button style={styles.loginBtn} mode="contained" onPress={() => this.onLogin({
+              <Text style={styles.loginText}>Login</Text>
+            </TouchableHighlight>
+            {/* <Button style={styles.loginBtn} mode="contained" onPress={() => this.onLogin({
                     email: this.state.email, 
                     password: this.state.password
-                })} title="Login" >Login</Button>
+                })} title="Login" >Login</Button> */}
             <View style={styles.containerLinksRow}>
-            {/* <TouchableHighlight style={styles.txtLink} onPress={() => this.navigateToPage('RestorePasswordScreen')}>
-                <Text style={{fontWeight:'bold'}}>Forgot your password?</Text>
-            </TouchableHighlight> */}
+            
 
             <TouchableHighlight style={styles.txtLink} onPress={() => this.navigateToPage('SignUpView')}>
                 <Text style={{fontWeight:'bold'}}>Register</Text>
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: "#00b5ec",
+      backgroundColor: "#007eec",
       padding: 30
     },
     row: {
@@ -169,7 +167,7 @@ const styles = StyleSheet.create({
       borderRadius: 5,
     },
     loginButton: {
-      backgroundColor: 'transparent',
+      backgroundColor: '#04dbc3',
       borderBottomColor: '#fff',
       borderBottomWidth: 1,
       justifyContent: 'center',
@@ -188,7 +186,8 @@ const styles = StyleSheet.create({
         padding: 15
     },  
     loginText: {
-      color: '#fff',
+      color: 'black',
+      fontWeight: 'bold'
     }
   });
 export default LoginView
