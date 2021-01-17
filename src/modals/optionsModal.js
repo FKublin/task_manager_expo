@@ -4,7 +4,7 @@ import {View,
         Text,  
         TouchableHighlight, TouchableOpacity,
         Platform, 
-        StyleSheet, FlatList} from 'react-native';
+        StyleSheet, FlatList, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
 import {Icon, Button} from 'react-native-elements';
@@ -38,6 +38,30 @@ class OptionsModal extends React.Component {
         await this.props.updateData();
     }
 
+    deleteProject = async() => {
+      var token = await AsyncStorage.getItem('token');
+        const url =
+          this.props.serverUrl + 'projects/' + this.props.projectId;
+        //console.log(url);
+        fetch(url, {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'auth-token': token,
+          },
+        })
+          .then(response => {
+            response.json()
+            const {navigation} = this.props;
+            navigation.navigate('DashboardView');
+          })
+         
+          .catch(error => console.error(error));
+        
+    
+    }
+
     render(){
         return(
             <View>
@@ -49,7 +73,14 @@ class OptionsModal extends React.Component {
                 visible={this.props.isVisible}>
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                      
+
+                    <TouchableOpacity
+                    style={styles.deleteProject}
+                    onPress={() => {
+                      this.deleteProject();
+                    }}>
+                    <Text style={styles.deleteText}>Delete this project</Text>
+                  </TouchableOpacity>  
                     <FlatList
                             data={this.props.users}
                             
@@ -101,7 +132,14 @@ class OptionsModal extends React.Component {
                 >
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                      
+
+                    <TouchableOpacity
+                    style={styles.deleteProject}
+                    onPress={() => {
+                      this.deleteProject();
+                    }}>
+                    <Text style={styles.deleteText}>Delete this project</Text>
+                  </TouchableOpacity>
                     <FlatList
                             data={this.props.users}
                             
@@ -109,14 +147,7 @@ class OptionsModal extends React.Component {
                             renderItem={({item}) => (
                             <View style={styles.userList}>
                                 <Text style={{...styles.modalText}, {padding: 10}}>{item.userName}</Text>
-                                {/* <TouchableOpacity
-                                style={styles.insideBtn}
-                                title="123"
-                                onPress={() => {                               
-                                    this.removeUser(item.id);
-                                }}>
-                                <Icon name="delete" color="#ffffff" />
-                                </TouchableOpacity> */}
+                                
                                 <Button icon={
                                   <Icon name='delete' color="#ffffff" />
                                 } 
@@ -198,5 +229,17 @@ const styles = StyleSheet.create({
       modalText: {
         //marginBottom: 15,
         textAlign: "center"
+      },
+      deleteProject: {
+        //width: '85%',
+        height: 45,
+        borderRadius: 40,
+        backgroundColor: '#c92c20',
+        justifyContent: 'center',
+      },
+      deleteText: {
+        textAlign: 'center',
+        color: '#ffffff',
+        fontSize: 22,
       },
 })
