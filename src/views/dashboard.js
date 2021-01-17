@@ -116,6 +116,7 @@ class DashboardView extends React.Component{
                     
                     keyExtractor={({_id}, index) => _id}
                     renderItem={({item}) => (
+                      
                       <TouchableOpacity
                         style={styles.touchable}
                         onPress={() => {
@@ -229,10 +230,24 @@ const styles = StyleSheet.create(
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: "#007eec"
           },
         buttonContainer: {
           flex: 1,
           flexDirection: 'row'
+        },
+        touchable: {
+          width: 300,
+          height: 60,
+          borderColor: '#ffffff',
+          borderWidth: 2,
+          marginTop: 15,
+          borderRadius: 30,
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#111111',
+          marginHorizontal: 'auto',
+          backgroundColor: '#ffffff',
         },
         fab: {
             position: 'absolute',

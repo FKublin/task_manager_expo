@@ -7,14 +7,15 @@ import {View,
         StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
-import {Icon, Button} from 'react-native-elements';
+import {CheckBox} from 'react-native-elements';
 import config from '../config.json';
 
 class UserModal extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            addEmail: ''
+            addEmail: '',
+            addAsAdmin: false
         }
     }
 
@@ -28,7 +29,8 @@ class UserModal extends React.Component {
           'auth-token': token
         },
         body: JSON.stringify({
-          email: this.state.addEmail
+          email: this.state.addEmail,
+          addAsAdmin: this.state.addAsAdmin
         }),
       });
 
@@ -54,6 +56,7 @@ class UserModal extends React.Component {
                         placeholder="User's email"
                         value={this.state.addEmail}
                         onChangeText={(email) => this.setState({addEmail: email})}/>
+                        <CheckBox title="Add as an admin?" checked={this.state.addAsAdmin} onPress={()=>{this.setState({addAsAdmin: !this.state.addAsAdmin})}} />
                       </View>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
@@ -89,7 +92,7 @@ class UserModal extends React.Component {
                         placeholder="User's email"
                         value={this.state.addEmail}
                         onChangeText={(email) => this.setState({addEmail: email})}/>
-
+                        <CheckBox title="Add as an admin?" checked={this.state.addAsAdmin} onPress={()=>{this.setState({addAsAdmin: !this.state.addAsAdmin})}} />
                       </View>
                       <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
