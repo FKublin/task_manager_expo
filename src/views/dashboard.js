@@ -9,6 +9,9 @@ import { StyleSheet,
     FlatList,
     Platform, Modal
 } from 'react-native';
+//import {Icon} from 'react-native-elements';
+import {Icon} from 'react-native-elements'
+// import {Icon as VectorIcon} from 'react-native-vector-icons/MaterialIcons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FAB} from 'react-native-paper';
 import WebModal from 'modal-react-native-web';
@@ -31,8 +34,19 @@ class DashboardView extends React.Component{
             projectName: '',
             modalVisible: false,
             serverUrl: '',
-      
         }
+        this.props.navigation.setOptions({
+          headerRight: () => (
+            <TouchableOpacity
+              style={{width: 50, height: 50, padding: 10}}
+              onPress={() => {
+                this.props.navigation.navigate('MyTasksView')
+              }}>
+              <Icon name="person" />
+
+            </TouchableOpacity>
+          ),
+        });
     }
 
     setModalVisible = (visible) => {

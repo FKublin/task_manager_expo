@@ -4,6 +4,7 @@ import SignUpView from './views/signup';
 import LoginView from './views/login';
 import DashboardView from './views/dashboard';
 import ProjectView from './views/project';
+import MyTasksView from './views/myTasks'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
 
@@ -44,6 +45,10 @@ render(){
             <Stack.Screen
                 name="ProjectView"
                 component={ProjectView}
+            />
+            <Stack.Screen
+                name="MyTasksView"
+                component={MyTasksView}
             />
 
         </Stack.Navigator>
