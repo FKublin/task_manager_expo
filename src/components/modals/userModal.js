@@ -8,7 +8,7 @@ import {View,
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
 import {CheckBox} from 'react-native-elements';
-import config from '../config.json';
+import config from '../../config.json';
 
 class UserModal extends React.Component {
     constructor(props){

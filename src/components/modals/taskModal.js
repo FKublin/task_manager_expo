@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import WebModal from 'modal-react-native-web'
 import {Picker as MobilePicker} from '@react-native-picker/picker'
 //import Modal from 'react-native-modal';
-import config from '../config.json';
+import config from '../../config.json';
 
 class TaskModal extends React.Component {
 
@@ -153,7 +153,8 @@ class TaskModal extends React.Component {
                           })
                         }
                       </Picker>
-                      <TouchableHighlight
+
+                      {/* <TouchableHighlight
                         style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                         onPress={() => {
                           //this.setModalVisible(!modalVisible);
@@ -171,7 +172,29 @@ class TaskModal extends React.Component {
                         }}
                       >
                         <Text style={styles.textStyle}>Create</Text>
-                      </TouchableHighlight>
+                      </TouchableHighlight> */}
+                      <View style={styles.buttonContainer}>
+                          <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3", marginRight: 15 }}
+                            onPress={() => {
+                              //this.setModalVisible(!modalVisible);
+                              this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
+                              this.props.onClose();
+                            }}
+                            >
+                            <Text style={styles.textStyle}>Cancel</Text>
+                          </TouchableHighlight>
+
+                          <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                            onPress={() => {
+                              this.submitTask({taskName: this.state.taskName, userStory: this.state.userStory, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
+                              this.props.onClose();
+                            }}
+                            >
+                            <Text style={styles.textStyle}>Create</Text>
+                          </TouchableHighlight>
+                        </View>
                       
                       </View>
                     </View>
@@ -194,7 +217,7 @@ class TaskModal extends React.Component {
                         placeholder="Task name"
                         value={this.state.taskName}
                         onChangeText={(taskNameText) => this.setState({taskName: taskNameText})}/>
-                        <TextInput style={styles.inputs}
+                      <TextInput style={styles.inputs}
                         keyboardType="default"
                         style={styles.inputs}
                         placeholder="User story"
@@ -217,7 +240,7 @@ class TaskModal extends React.Component {
                         }
                       </MobilePicker>
 
-                        <View style={{flexDirection:'row'}}>
+                        <View style={styles.buttonContainer}>
                           <TouchableHighlight
                             style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                             onPress={() => {
@@ -268,8 +291,8 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
-        height: 350,
-        width: "80%",
+        height: 375,
+        width: 500,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -283,12 +306,14 @@ const styles = StyleSheet.create({
       },
       openButton: {
         backgroundColor: "#F194FF",
+        marginTop: 20,
         borderRadius: 20,
         padding: 10,
         elevation: 2,
         marginTop: 10
       },
       textStyle: {
+        fontSize: 20,
         color: "black",
         fontWeight: "bold",
         textAlign: "center"
@@ -312,4 +337,9 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: 'column'
       },
+      buttonContainer: {
+        flexDirection:'row',
+        justifyContent: 'center',
+        marginTop: 15
+      }
 })

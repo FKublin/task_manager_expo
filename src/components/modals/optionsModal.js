@@ -8,7 +8,7 @@ import {View,
 import AsyncStorage from '@react-native-async-storage/async-storage';        
 import WebModal from 'modal-react-native-web'
 import {Icon, Button} from 'react-native-elements';
-import config from '../config.json';
+import config from '../../config.json';
 
 class OptionsModal extends React.Component {
 
@@ -146,7 +146,7 @@ class OptionsModal extends React.Component {
                             keyExtractor={({id}, index) => id}
                             renderItem={({item}) => (
                             <View style={styles.userList}>
-                                <Text style={{...styles.modalText}, {padding: 10}}>{item.userName}</Text>
+                                <Text style={{...styles.modalText, marginRight: 20}}>{item.userName}</Text>
                                 
                                 <Button icon={
                                   <Icon name='delete' color="#ffffff" />
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
       },
       modalText: {
-        //marginBottom: 15,
+        //
         textAlign: "center"
       },
       deleteProject: {

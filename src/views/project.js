@@ -14,9 +14,9 @@ import {List, FAB} from 'react-native-paper';
 import {Icon} from 'react-native-elements';
 import config from '../config.json';
 import WebModal from 'modal-react-native-web';
-import TaskModal from '../modals/taskModal';
-import OptionsModal from '../modals/optionsModal'
-import UserModal from '../modals/userModal';
+import TaskModal from '../components/modals/taskModal';
+import OptionsModal from '../components/modals/optionsModal'
+import UserModal from '../components/modals/userModal';
 import CommentsSection from '../components/comment'
 
 
@@ -39,18 +39,6 @@ class ProjectView extends React.Component{
           isAdmin: false
         };
 
-        this.props.navigation.setOptions({
-          headerRight: () => (
-            <TouchableOpacity
-              style={styles.touchable}
-              onPress={() => {
-                console.log(this.state.users)
-                this.setState({optionsModalVisible: true})
-              }}>
-              <Icon name="settings"/>
-            </TouchableOpacity>
-          ),
-        });
       }
 
       addUser = async() => {
@@ -85,7 +73,6 @@ class ProjectView extends React.Component{
       }).then(this.getData())
       .catch(error => console.error(error));;
 
-      
       await this.getData();
       }
     
@@ -164,6 +151,22 @@ class ProjectView extends React.Component{
             this.setState({users: json.users});
             this.setState({isAdmin: json.isAdmin})
             //console.log(this.state);
+          }).then(()=> {
+          if(this.state.isAdmin){
+            this.props.navigation.setOptions({
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.touchable}
+                  onPress={() => {
+                    console.log(this.state.users)
+                    this.setState({optionsModalVisible: true})
+                  }}>
+                  <Icon name="settings"/>
+                </TouchableOpacity>
+              ),
+            });
+
+          }
           })
           .catch(error => console.error(error))
       };
@@ -273,7 +276,8 @@ class ProjectView extends React.Component{
       onClose={()=> {this.setState({optionsModalVisible: false})}}
       updateData={() => {this.getData()}}
       projectId={this.id.projectId}
-      serverUrl={this.state.serverUrl} />
+      serverUrl={this.state.serverUrl} 
+      navigation={this.props.navigation}/>
 
       <UserModal
       isVisible={this.state.addUserModalVisible}
