@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',   
       backgroundColor : "white",   
       height: 300 ,  
-      width: '50%',  
+      width: 400,  
       borderRadius:10,  
       borderWidth: 1,  
       borderColor: '#fff',    
@@ -240,6 +240,6 @@ const styles = StyleSheet.create({
       deleteText: {
         textAlign: 'center',
         color: '#ffffff',
-        fontSize: 22,
+        fontSize: 19,
       },
 })

@@ -21,12 +21,6 @@ import config from '../config.json';
     
 class DashboardView extends React.Component{
 
-    static navigationOptions = {
-        title: 'Dashboard',
-        header: null,
-
-    };
-
     constructor(props) {
         super(props);
         this.state = {
@@ -119,8 +113,6 @@ class DashboardView extends React.Component{
 
         return(
             <View style={styles.container}>
-              
-                
                 {this.state.data.length == 0 ? 
                     <Text>You do not belong to any projects at the moment. Creat one with the button below or ask for an invitation</Text>
                  : 
@@ -204,7 +196,7 @@ class DashboardView extends React.Component{
                       </View>
                       <View style={styles.buttonContainer}>
                       <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        style={{ ...styles.openButton, backgroundColor: "#2196F3", marginRight: 15 }}
                         onPress={() => {
                           this.setModalVisible(!modalVisible);
                         }}
@@ -247,8 +239,9 @@ const styles = StyleSheet.create(
             backgroundColor: "#007eec"
           },
         buttonContainer: {
-          flex: 1,
-          flexDirection: 'row'
+          flexDirection:'row',
+          justifyContent: 'center',
+          marginTop: 15
         },
         touchable: {
           width: 300,
@@ -292,11 +285,11 @@ const styles = StyleSheet.create(
           },
           openButton: {
             backgroundColor: "#F194FF",
+            marginTop: 20,
             borderRadius: 20,
             padding: 10,
             elevation: 2,
-            height: 40,
-            margin: 20
+            marginTop: 10
           },
           textStyle: {
             color: "black",
@@ -309,6 +302,7 @@ const styles = StyleSheet.create(
             textAlign: "center"
           },
           inputs:{
+            borderWidth: 1,
             height: 50,
             marginLeft:16,
             flex:1,

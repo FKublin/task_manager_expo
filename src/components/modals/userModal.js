@@ -58,23 +58,26 @@ class UserModal extends React.Component {
                         onChangeText={(email) => this.setState({addEmail: email})}/>
                         <CheckBox title="Add as an admin?" checked={this.state.addAsAdmin} onPress={()=>{this.setState({addAsAdmin: !this.state.addAsAdmin})}} />
                       </View>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.addUser({email: this.state.addEmail});
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Add</Text>
-                      </TouchableHighlight>
+
+                      <View style={styles.buttonContainer}>
+                        <TouchableHighlight
+                          style={{ ...styles.openButton, backgroundColor: "#2196F3", marginRight: 15 }}
+                          onPress={() => {
+                            this.props.onClose();
+                          }}
+                        >
+                          <Text style={styles.textStyle}>Cancel</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                          style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                          onPress={() => {
+                            this.addUser({email: this.state.addEmail});
+                            this.props.onClose();
+                          }}
+                        >
+                          <Text style={styles.textStyle}>Add</Text>
+                        </TouchableHighlight>
+                      </View>
                     </View>
                   </View>
                 </WebModal>  : 
@@ -163,6 +166,7 @@ const styles = StyleSheet.create({
       inputs:{
         height: 50,
         marginLeft:16,
+        borderWidth: 1,
         flex:1,
       },
       inputContainer: {
@@ -172,4 +176,9 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: 'column'
       },
+      buttonContainer: {
+        flexDirection:'row',
+        justifyContent: 'center',
+        marginTop: 15
+      }
 })

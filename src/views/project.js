@@ -145,12 +145,10 @@ class ProjectView extends React.Component{
           .then(response => response.json())
           .then(json => {
             console.log(json);
-            //this.setState({data: json.data}); 
             const sortedTasks = json.data.sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
             this.setState({data: sortedTasks});
             this.setState({users: json.users});
             this.setState({isAdmin: json.isAdmin})
-            //console.log(this.state);
           }).then(()=> {
           if(this.state.isAdmin){
             this.props.navigation.setOptions({

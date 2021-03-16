@@ -154,25 +154,6 @@ class TaskModal extends React.Component {
                         }
                       </Picker>
 
-                      {/* <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          //this.setModalVisible(!modalVisible);
-                          this.setState({taskEndDate: '', pickedUser: '', taskName: ''})
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Cancel</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                          this.submitTask({taskName: this.state.taskName, userStory: this.state.userStory, endDate: this.state.taskEndDate, taskHolder: this.state.pickedUser});
-                          this.props.onClose();
-                        }}
-                      >
-                        <Text style={styles.textStyle}>Create</Text>
-                      </TouchableHighlight> */}
                       <View style={styles.buttonContainer}>
                           <TouchableHighlight
                             style={{ ...styles.openButton, backgroundColor: "#2196F3", marginRight: 15 }}

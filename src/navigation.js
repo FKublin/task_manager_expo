@@ -10,7 +10,6 @@ import { StackActions } from '@react-navigation/native';
 
 
 const Stack = createStackNavigator()
-//const navigation = useNavigation();
 export default class AppNavigator extends React.Component{
     
 render(){
@@ -33,7 +32,6 @@ render(){
                           {...props}
                           onPress={() => {
                             AsyncStorage.removeItem('token');
-                            //this.props.navigation.navigate("LoginView")
                             navigation.dispatch(StackActions.popToTop());
   
                           }}

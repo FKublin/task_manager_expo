@@ -36,7 +36,8 @@ class CommentsSection extends React.Component {
         this.setState({commentText: ''});
         await this.props.updateData();
         
-    }    
+    }
+
     componentDidMount() {
       this.setState({comments: this.props.data})
     }
@@ -49,9 +50,10 @@ class CommentsSection extends React.Component {
             data={this.props.data}
             keyExtractor={({_id}, index) => _id}
             renderItem={({item}) => (
-                // <Text>{item.commentText}</Text>
             <View style={{flexDirection:'column', justifyContent: 'flex-start', marginBottom: 10}}>
-                <Text style={{textAlign:'left'}}>{this.props.mapUser(item.commenter) + ' : ' + item.addedDate.toString()}</Text>
+                <Text style={{textAlign:'left'}}>{this.props.mapUser(item.commenter) + ' '
+                 + new Date(item.addedDate).getDate() + '/' + (parseInt(new Date(item.addedDate).getMonth(), 10) + 1) + '/' 
+                 + new Date(item.addedDate).getFullYear() }</Text>
                 <Text style={{textAlign:'left', fontSize: 15}}>{item.commentText}</Text>
             </View>
             )} /> :
@@ -64,11 +66,6 @@ class CommentsSection extends React.Component {
             value={this.state.commentText} 
             onChangeText={(commentText) => {this.setState({commentText})}}/> 
             <Button style={styles.button} mode="contained" onPress={() => this.postComment()} title="Post" >Post</Button>
-            {/* <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                            onPress={() => {()=> this.postComment()}}>
-                            <Text style={styles.textStyle}>Create</Text>
-                          </TouchableHighlight> */}
             </View>
         </View>
         )
@@ -79,7 +76,6 @@ export default CommentsSection;
 
 const styles = StyleSheet.create({
     inputs:{
-        //textAlign: 'center',
         width: 200,
         height: 45,
         color: 'black',

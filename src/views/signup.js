@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
       borderRadius: 5,
     },
     loginButton: {
-      backgroundColor: 'transparent',
+      backgroundColor: '#04dbc3',
       borderBottomColor: '#fff',
       borderBottomWidth: 1,
       justifyContent: 'center',
@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
       padding: 15
     },  
     loginText: {
-      color: '#fff',
+      color: 'black',
+      fontWeight: 'bold'
     }
   });
 
